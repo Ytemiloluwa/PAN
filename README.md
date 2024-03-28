@@ -1,6 +1,6 @@
 # PAN Generator
 
-PAN Generator is a desktop/command-line software written in Python that generates valid Indian Permanent Account Numbers (PAN) for individuals. It provides an easy-to-use interface for generating PAN numbers efficiently.
+PAN Generator is a desktop/command-line software written in Python that generates and validates Primary Account Numbers (PAN) for fintechs/micro finance banks. It uses numerical computing with luhn algorithm to make permuatation and combination of mastercard 16 digit numbers present on ATM cards. The software provides an easy-to-use interface for generating PAN numbers efficiently. 
 
 ## Features
 
