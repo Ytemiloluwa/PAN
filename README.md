@@ -4,8 +4,8 @@ PAN Generator is a desktop/command-line software written in Python that generate
 
 ## Features
 
-- Generates valid Indian PAN numbers.
-- Supports both individual PAN generation.
+- Generates and Validates PAN numbers(Mastercard).
+- Produces 1 million Primary Account Numbers.
 - Simple command-line interface.
 - Cross-platform compatibility (works on both Mac and Windows).
 
