@@ -2,7 +2,7 @@ import tkinter as tk
 from tkinter import ttk, scrolledtext, Menu
 from tkinter import messagebox
 from generator import generate_pan, generate_cvv
-from validator import validate_pan, detect_card_brand
+from validator import validate_pan, detect_card_brand, validate_expiry_date
 
 win = tk.Tk()
 def setup_ui(win):
@@ -53,6 +53,12 @@ def validate_action(name, scr):
     is_valid, message = validate_pan(pan_input)
     scr.delete(1.0, tk.END)
     scr.insert(tk.END, message)
+
+def validate_expiry_action(expiry_date, scr):
+    is_valid, message = validate_expiry_date(expiry_date)
+    scr.delete(1.0, tk.END)
+    scr.insert(tk.END, message)
+
 
 def _quit():
     win.quit()
