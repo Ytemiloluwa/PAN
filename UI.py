@@ -41,6 +41,19 @@ def setup_ui(win):
     help_menu.add_command(label="About", command=lambda: messagebox.showinfo("About", "PAN Generator App v1.0"))
     menu_bar.add_cascade(label="Help", menu=help_menu)
 
+    # Inside setup_ui function in ui.py
+    expiry_label = ttk.Label(mighty, text="Expiry Date (MM/YY):")
+    expiry_label.grid(column=0, row=2, sticky='W')
+
+    expiry_date = tk.StringVar()
+    expiry_entered = ttk.Entry(mighty, width=20, textvariable=expiry_date)
+    expiry_entered.grid(column=1, row=2, sticky='W')
+
+    action_validate_expiry = ttk.Button(mighty, text="Validate Expiry",
+                                        command=lambda: validate_expiry_action(expiry_date.get(), scr))
+    action_validate_expiry.grid(column=2, row=2)
+
+
 def generate_action(name, scr):
     bin_input = name.get()
     pans = generate_pan(bin_input)
