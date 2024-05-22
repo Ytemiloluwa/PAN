@@ -41,7 +41,6 @@ def setup_ui(win):
     help_menu.add_command(label="About", command=lambda: messagebox.showinfo("About", "PAN Generator App v1.0"))
     menu_bar.add_cascade(label="Help", menu=help_menu)
 
-    # Inside setup_ui function in ui.py
     expiry_label = ttk.Label(mighty, text="Expiry Date (MM/YY):")
     expiry_label.grid(column=0, row=2, sticky='W')
 
@@ -76,3 +75,4 @@ def validate_expiry_action(expiry_date, scr):
 def _quit():
     win.quit()
     win.destroy()
+    exit()
