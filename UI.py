@@ -71,9 +71,11 @@ def setup_ui(win):
     action_generate_cvv.grid(column=2, row=5)
 
 
-def generate_action(name, scr):
+def generate_action(name, scr, brand, count):
     bin_input = name.get()
-    pans = generate_pan(bin_input)
+    card_brand = brand.get()
+    pan_count = count.get()
+    pans = generate_pan(bin_input, count=pan_count, brand=card_brand)
     scr.delete(1.0, tk.END)
     for pan in pans:
         scr.insert(tk.END, pan + '\n')
