@@ -52,6 +52,24 @@ def setup_ui(win):
                                         command=lambda: validate_expiry_action(expiry_date.get(), scr))
     action_validate_expiry.grid(column=2, row=2)
 
+    # adding  entries for count and CVV generation
+    count_label = ttk.Label(mighty, text="Count:")
+    count_label.grid(column=0, row=4, sticky='W')
+
+    count = tk.IntVar(value=1)
+    count_entered = ttk.Entry(mighty, width=20, textvariable=count)
+    count_entered.grid(column=1, row=4, sticky='W')
+
+    cvv_label = ttk.Label(mighty, text="CVV:")
+    cvv_label.grid(column=0, row=5, sticky='W')
+
+    cvv = tk.StringVar()
+    cvv_generated = ttk.Entry(mighty, width=20, textvariable=cvv, state='readonly')
+    cvv_generated.grid(column=1, row=5, sticky='W')
+
+    action_generate_cvv = ttk.Button(mighty, text="Generate CVV", command=lambda: cvv.set(generate_cvv()))
+    action_generate_cvv.grid(column=2, row=5)
+
 
 def generate_action(name, scr):
     bin_input = name.get()
