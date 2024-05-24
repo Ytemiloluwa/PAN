@@ -111,6 +111,11 @@ def import_bins_action(scr):
         scr.delete(1.0, tk.END)
         for bin in bins:
             scr.insert(tk.END, bin + '\n')
+def export_pans_action(scr):
+    file_path = fd.asksaveasfilename(defaultextension=".csv", filetypes=[("CSV files", "*.csv")])
+    if file_path:
+        pans = scr.get(1.0, tk.END).strip().split('\n')
+        export_pans(file_path, pans)
 
 def _quit():
     win.quit()
