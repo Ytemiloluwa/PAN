@@ -10,8 +10,10 @@ win.title("PAN GENERATOR")
 win.iconbitmap("/Users/temi/Downloads")
 
 # Setup UI components
-
+setup_ui(win)
 #initialize logging:
 setup_logging()
 # Start the GUI
 win.mainloop()
+# win.destroy()
+# exit()
