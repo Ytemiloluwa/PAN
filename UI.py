@@ -4,6 +4,8 @@ from tkinter import messagebox
 from generator import generate_pan, generate_cvv
 from validator import validate_pan, detect_card_brand, validate_expiry_date
 from import_export import import_bins, export_pans
+import tkinter.filedialog as fd
+
 
 win = tk.Tk()
 def setup_ui(win):
@@ -102,6 +104,13 @@ def validate_expiry_action(expiry_date, scr):
     scr.delete(1.0, tk.END)
     scr.insert(tk.END, message)
 
+def import_bins_action(scr):
+    file_path = fd.askopenfilename(filetypes=[("CSV files", "*.csv")])
+    if file_path:
+        bins = import_bins(file_path)
+        scr.delete(1.0, tk.END)
+        for bin in bins:
+            scr.insert(tk.END, bin + '\n')
 
 def _quit():
     win.quit()
