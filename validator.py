@@ -1,12 +1,16 @@
 from utils import luhn_check, bin_ranges
 from datetime import datetime
+import re
+from generator import is_luhn_valid
 
 def validate_pan(pan):
-    if not luhn_check(pan):
-        return False, "Failed Luhn check"
-    if not bin_ranges(pan):
-        return False, "Invalid BIN range"
-    return True, "Valid PAN"
+    if re.match(r'^\d+$', pan) and len(pan) == 16:
+        if is_luhn_valid(pan):
+            return True, "The PAN is valid."
+        else:
+            return False, "The PAN is invalid (Failed Luhn Check)."
+    else:
+        return False, "The PAN must be a 16-digit number."
 
 def detect_card_brand(pan):
     brands = {
