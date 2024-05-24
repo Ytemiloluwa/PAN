@@ -3,6 +3,7 @@ from tkinter import ttk, scrolledtext, Menu
 from tkinter import messagebox
 from generator import generate_pan, generate_cvv
 from validator import validate_pan, detect_card_brand, validate_expiry_date
+from import_export import import_bins, export_pans
 
 win = tk.Tk()
 def setup_ui(win):
@@ -71,11 +72,21 @@ def setup_ui(win):
     action_generate_cvv.grid(column=2, row=5)
 
 
+
+   # including import / export functions in the UI
+
+    import_button = ttk.Button(mighty, text="Import BINs", command=lambda: import_bins(scr))
+    import_button.grid(column=0, row=6, sticky='W')
+
+    export_button = ttk.Button(mighty, text="Export PANs", command=lambda: export_pans(scr))
+    export_button.grid(column=1, row=6, sticky='W')
+
+
 def generate_action(name, scr, brand, count):
     bin_input = name.get()
     card_brand = brand.get()
     pan_count = count.get()
-    pans = generate_pan(bin_input, count=pan_count, brand=card_brand)
+    pans = generate_pan(bin_input, count=pan_count)
     scr.delete(1.0, tk.END)
     for pan in pans:
         scr.insert(tk.END, pan + '\n')
