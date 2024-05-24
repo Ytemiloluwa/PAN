@@ -86,7 +86,7 @@ def generate_action(name, scr, brand, count):
     bin_input = name.get()
     card_brand = brand.get()
     pan_count = count.get()
-    pans = generate_pan(bin_input, count=pan_count)
+    pans = generate_pan(bin_input, count=pan_count, brand=card_brand)
     scr.delete(1.0, tk.END)
     for pan in pans:
         scr.insert(tk.END, pan + '\n')
