@@ -1,13 +1,11 @@
 import tkinter as tk
 from tkinter import ttk, scrolledtext, Menu
 from tkinter import messagebox
-from generator import generate_pan, generate_cvv
+from generator import generate_cvv, generate_pan
 from validator import validate_pan, detect_card_brand, validate_expiry_date
 from import_export import import_bins, export_pans
 import tkinter.filedialog as fd
 
-
-win = tk.Tk()
 def setup_ui(win):
     tabControl = ttk.Notebook(win)
     tab1 = ttk.Frame(tabControl)
@@ -23,21 +21,23 @@ def setup_ui(win):
     name_entered = ttk.Entry(mighty, width=80, textvariable=name)
     name_entered.grid(column=0, row=1, sticky='W')
 
-    action_generate = ttk.Button(mighty, text="Generate", command=lambda: generate_action(name, scr))
-    action_generate.grid(column=2, row=1)
-
-    action_validate = ttk.Button(mighty, text="Validate", command=lambda: validate_action(name, scr))
-    action_validate.grid(column=1, row=1)
-
     scrol_w = 80
     scrol_h = 20
     scr = scrolledtext.ScrolledText(mighty, width=scrol_w, height=scrol_h, wrap=tk.WORD, font=("Helvetica", 15))
     scr.grid(column=0, row=5, sticky='WE', columnspan=3)
 
+    action_generate = ttk.Button(mighty, text="Generate", command=lambda : generate_action(name, scr))
+    action_generate.grid(column=2, row=1)
+
+    action_validate = ttk.Button(mighty, text="Validate", command=lambda: validate_action(name, scr))
+    action_validate.grid(column=1, row=1)
+
+
+
     menu_bar = Menu(win)
     win.config(menu=menu_bar)
     file_menu = Menu(menu_bar, tearoff=0)
-    file_menu.add_command(label="Exit", command=_quit)
+    #file_menu.add_command(label="Exit", command=_quit)
     menu_bar.add_cascade(label="File", menu=file_menu)
 
     help_menu = Menu(menu_bar, tearoff=0)
@@ -73,8 +73,6 @@ def setup_ui(win):
     action_generate_cvv = ttk.Button(mighty, text="Generate CVV", command=lambda: cvv.set(generate_cvv()))
     action_generate_cvv.grid(column=2, row=5)
 
-
-
    # including import / export functions in the UI
 
     import_button = ttk.Button(mighty, text="Import BINs", command=lambda: import_bins(scr))
@@ -83,15 +81,16 @@ def setup_ui(win):
     export_button = ttk.Button(mighty, text="Export PANs", command=lambda: export_pans(scr))
     export_button.grid(column=1, row=6, sticky='W')
 
+    #place the cursor into name entry
+    name_entered.focus()
 
-def generate_action(name, scr, brand, count):
+def generate_action(name, scr):
     bin_input = name.get()
-    card_brand = brand.get()
-    pan_count = count.get()
-    pans = generate_pan(bin_input, count=pan_count, brand=card_brand)
-    scr.delete(1.0, tk.END)
-    for pan in pans:
-        scr.insert(tk.END, pan + '\n')
+    if bin_input:
+        scr.delete(1.0, tk.END)
+        pans = generate_pan(bin_input)
+        for pan in pans:
+            scr.insert(tk.END, pan + '\n')
 
 def validate_action(name, scr):
     pan_input = name.get()
@@ -116,8 +115,3 @@ def export_pans_action(scr):
     if file_path:
         pans = scr.get(1.0, tk.END).strip().split('\n')
         export_pans(file_path, pans)
-
-def _quit():
-    win.quit()
-    win.destroy()
-    exit()
