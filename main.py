@@ -5,15 +5,10 @@ from UI import setup_ui
 from configuration import setup_logging
 
 # Create instance
-win = tk.Tk()
-win.title("PAN GENERATOR")
-win.iconbitmap("/Users/temi/Downloads")
 
-# Setup UI components
-setup_ui(win)
-#initialize logging:
-setup_logging()
-# Start the GUI
-win.mainloop()
-# win.destroy()
-# exit()
+
+if __name__ == "__main__":
+    win = tk.Tk()
+    win.title("PAN Generator App")
+    setup_ui(win)
+    win.mainloop()
