@@ -1,7 +1,7 @@
 import numpy as np
 import random
 import re
-from utils import luhn_check, bin_ranges, IIN_Ranges, IIN_Ranges_List
+from utils import luhn_check, IIN_Ranges, IIN_Ranges_List
 
 
 def detect_card_brand(bin_number):
@@ -13,6 +13,16 @@ def detect_card_brand(bin_number):
         return 'American Express'
     else:
         return 'Unknown'
+
+def update_card_brand_display(bin_entry, card_vars):
+    bin_number = bin_entry.get()
+    brand = detect_card_brand(bin_number)
+
+    for var in card_vars.values():
+        var.set(0)
+
+    if brand in card_vars:
+        card_vars[brand].set(1)
 
 def generate_pan(credit_card):
     if credit_card.count("?") > 0 and len(credit_card) <= 16:
