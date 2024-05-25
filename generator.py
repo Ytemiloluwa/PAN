@@ -4,11 +4,15 @@ import re
 from utils import luhn_check, bin_ranges, IIN_Ranges, IIN_Ranges_List
 
 
-CARD_BRANDS = {
-    'Visa': '4',
-    'Mastercard': '5',
-    'American Express': '3'
-}
+def detect_card_brand(bin_number):
+    if bin_number.startswith('4'):
+        return 'Visa'
+    elif bin_number.startswith(('51', '52', '53', '54', '55')):
+        return 'Mastercard'
+    elif bin_number.startswith(('34', '37')):
+        return 'American Express'
+    else:
+        return 'Unknown'
 
 def generate_pan(credit_card):
     if credit_card.count("?") > 0 and len(credit_card) <= 16:
