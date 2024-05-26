@@ -1,18 +1,23 @@
 # PAN Generator
 
-PAN Generator is a desktop/command-line software written in Python that generates and validates Primary Account Numbers (PAN) for fintechs/micro finance banks. It uses numerical computing with luhn algorithm to make permuatation and combination of mastercard 16 digit numbers present on ATM cards. The software provides an easy-to-use interface for generating PAN numbers efficiently. 
+PAN Generator is a desktop/command-line software written in Python that generates and validates Primary Account Numbers (PAN) for fintechs/micro finance banks. It uses numerical computing with luhn algorithm to make permuatation and combination of mastercard, visa(16) and American express (15) digit numbers present on ATM cards. The software provides an easy-to-use interface for generating PAN numbers efficiently. 
 
 ## Features
 
-- Generates and Validates PAN numbers(Mastercard).
+- Generates and Validates PAN numbers(Mastercard, Visa, American Express).
 - Produces 1 million Primary Account Numbers.
 - Simple command-line interface.
 - Cross-platform compatibility (works on both Mac and Windows).
 
 ## Requirements
 
-- Python 3.x
-- No additional dependencies required.
+- Python 3.x.
+- Tkinter
+- re
+- numpy
+- Sqlite3
+- PIL
+  
 
 ## Installation
 
