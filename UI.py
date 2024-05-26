@@ -1,3 +1,4 @@
+import sqlite3
 import tkinter as tk
 from tkinter import ttk, scrolledtext, Menu
 from tkinter import messagebox
@@ -142,3 +143,11 @@ def export_pans_action(scr):
     if file_path:
         pans = scr.get(1.0, tk.END).strip().split('\n')
         export_pans(file_path, pans)
+
+def insert_pans_into_db(pans):
+    conn = sqlite3.connect('pans.db')
+    cursor = conn.cursor()
+    for pan in pans:
+        cursor.execute('INSERT INTO pans (pan) VALUES (?)', (pan,))
+    conn.commit()
+    conn.close()
