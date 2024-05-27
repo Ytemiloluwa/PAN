@@ -94,7 +94,7 @@ def setup_ui(win):
     import_button = ttk.Button(mighty, text="Import BIN", command=lambda: import_bins(scr))
     import_button.grid(column=0, row=6, sticky='W', padx=5, pady=5)
     export_button = ttk.Button(mighty, text="Export PANs", command=lambda: export_pans(scr))
-    export_button.grid(column=1, row=6, sticky='W', padx=5, pady=5)
+    export_button.gid(column=1, row=6, sticky='W', padx=5, pady=5)
 
     # Row 8: ScrolledText
     scrol_w = 80
@@ -118,7 +118,7 @@ def generate_action(name, scr, count_var):
         pans = generate_pan(bin_input)
         for pan in pans:
             scr.insert(tk.END, pan + '\n')
-        count_var.set(len(pans))
+        count_var.set('{:,}'.format(len(pans)))
 
 def validate_action(name, scr):
     pan_input = name.get()
