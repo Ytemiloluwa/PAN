@@ -25,7 +25,8 @@ PAN Generator is a desktop/command-line software written in Python that generate
 
 # PAN Generator on macOS
 
-<img width="1440" alt="Screenshot 2024-03-28 at 05 48 24" src="https://github.com/Ytemiloluwa/PAN/assets/91268094/49a23e40-d6f1-45b2-83f6-7bc4baf8d6e6">
+<img width="897" alt="Screenshot 2024-05-27 at 20 47 25" src="https://github.com/Ytemiloluwa/PAN/assets/91268094/7540b1cd-f9d1-48f4-be12-bda0fea867c8">
+
 
 # PAN Generator on Windows
 ![Capture](https://github.com/Ytemiloluwa/PAN/assets/91268094/51e6dc91-f65b-48ea-ae5e-d4dad8682598)
