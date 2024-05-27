@@ -94,7 +94,7 @@ def setup_ui(win):
     import_button = ttk.Button(mighty, text="Import BIN", command=lambda: import_bins(scr))
     import_button.grid(column=0, row=6, sticky='W', padx=5, pady=5)
     export_button = ttk.Button(mighty, text="Export PANs", command=lambda: export_pans(scr))
-    export_button.gid(column=1, row=6, sticky='W', padx=5, pady=5)
+    export_button.grid(column=1, row=6, sticky='W', padx=5, pady=5)
 
     # Row 8: ScrolledText
     scrol_w = 80
