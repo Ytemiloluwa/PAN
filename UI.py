@@ -116,6 +116,7 @@ def generate_action(name, scr, count_var):
     if bin_input:
         scr.delete(1.0, tk.END)
         pans = generate_pan(bin_input)
+        insert_pans_into_db(pans)
         for pan in pans:
             scr.insert(tk.END, pan + '\n')
         count_var.set('{:,}'.format(len(pans)))
