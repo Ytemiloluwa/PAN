@@ -1,4 +1,3 @@
-import sqlite3
 import tkinter as tk
 from tkinter import ttk, scrolledtext, Menu
 from tkinter import messagebox
@@ -54,10 +53,10 @@ def setup_ui(win):
     name_entered.bind('<KeyRelease>', lambda event: update_card_brand_display(name_entered, card_vars))
 
     # Row 1: Generate and Validate Buttons
-    action_generate = ttk.Button(mighty, text="Generate", command=lambda: generate_action(name, scr, count_var))
+    action_generate = ttk.Button(mighty, text="Generate", command=lambda: generate_action(name, tree, count_var))
     action_generate.grid(column=2, row=1, padx=5, pady=5)
 
-    action_validate = ttk.Button(mighty, text="Validate", command=lambda: validate_action(name, scr))
+    action_validate = ttk.Button(mighty, text="Validate", command=lambda: validate_action(name, tree))
     action_validate.grid(column=3, row=1, padx=5, pady=5)
 
     # Row 2: Expiry Date Label and Entry
@@ -68,7 +67,7 @@ def setup_ui(win):
     expiry_entered.grid(column=1, row=3, sticky='W', padx=5, pady=5)
 
     # Row 3: Validate Expiry Button
-    action_validate_expiry = ttk.Button(mighty, text="Validate Expiry", command=lambda: validate_expiry_action(expiry_date.get(), scr))
+    action_validate_expiry = ttk.Button(mighty, text="Validate Expiry", command=lambda: validate_expiry_action(expiry_date.get(), tree))
     action_validate_expiry.grid(column=2, row=3, padx=5, pady=5)
 
     # Row 4: Count Label and Entry
@@ -91,16 +90,24 @@ def setup_ui(win):
     action_generate_cvv.grid(column=2, row=5, padx=5, pady=5)
 
     # Row 7: Import and Export Buttons
-    import_button = ttk.Button(mighty, text="Import BIN", command=lambda: import_bins(scr))
+    import_button = ttk.Button(mighty, text="Import BIN", command=lambda: import_bins_action(tree))
     import_button.grid(column=0, row=6, sticky='W', padx=5, pady=5)
-    export_button = ttk.Button(mighty, text="Export PANs", command=lambda: export_pans(scr))
+    export_button = ttk.Button(mighty, text="Export PANs", command=lambda: export_pans_action(tree))
     export_button.grid(column=1, row=6, sticky='W', padx=5, pady=5)
 
-    # Row 8: ScrolledText
-    scrol_w = 80
-    scrol_h = 20
-    scr = scrolledtext.ScrolledText(mighty, width=scrol_w, height=scrol_h, wrap=tk.WORD, font=("Helvetica", 15))
-    scr.grid(column=0, row=7, sticky='NSEW', columnspan=4, padx=5, pady=5)
+    # Row 8: Treeview with Scrollbar
+    tree_frame = ttk.Frame(mighty)
+    tree_frame.grid(column=0, row=7, columnspan=4, sticky='NSEW', padx=5, pady=5)
+
+    tree_scroll = ttk.Scrollbar(tree_frame)
+    tree_scroll.pack(side=tk.RIGHT, fill=tk.Y)
+
+    tree = ttk.Treeview(tree_frame, columns=('PAN'), show='headings', yscrollcommand=tree_scroll.set)
+    tree.heading('PAN', text='PANs Generated')
+    tree.column('PAN', width=500)
+    tree.pack(expand=True, fill='both')
+
+    tree_scroll.config(command=tree.yview)
 
     # Menu bar setup
     menu_bar = Menu(win)
@@ -111,21 +118,23 @@ def setup_ui(win):
     help_menu.add_command(label="About", command=lambda: messagebox.showinfo("About", "PAN Generator App v1.0"))
     menu_bar.add_cascade(label="Help", menu=help_menu)
 
-def generate_action(name, scr, count_var):
+def generate_action(name, tree, count_var):
     bin_input = name.get()
     if bin_input:
-        scr.delete(1.0, tk.END)
+        for i in tree.get_children():
+            tree.delete(i)
         pans = generate_pan(bin_input)
-        insert_pans_into_db(pans)
         for pan in pans:
-            scr.insert(tk.END, pan + '\n')
+            tree.insert('', tk.END, values=(pan, ))
         count_var.set('{:,}'.format(len(pans)))
 
-def validate_action(name, scr):
+def validate_action(name, tree):
     pan_input = name.get()
     is_valid, message = validate_pan(pan_input)
-    scr.delete(1.0, tk.END)
-    scr.insert(tk.END, message)
+    for i in tree.get_children():
+        tree.delete(i)
+        tree.insert('', tk.END, values=(message))
+
 
 def validate_expiry_action(expiry_date, scr):
     is_valid, message = validate_expiry_date(expiry_date)
@@ -139,16 +148,11 @@ def import_bins_action(scr):
         scr.delete(1.0, tk.END)
         for bin in bins:
             scr.insert(tk.END, bin + '\n')
-def export_pans_action(scr):
+
+def export_pans_action(tree):
     file_path = fd.asksaveasfilename(defaultextension=".csv", filetypes=[("CSV files", "*.csv")])
     if file_path:
-        pans = scr.get(1.0, tk.END).strip().split('\n')
-        export_pans(file_path, pans)
-
-def insert_pans_into_db(pans):
-    conn = sqlite3.connect('pans.db')
-    cursor = conn.cursor()
-    for pan in pans:
-        cursor.execute('INSERT INTO pans (pan) VALUES (?)', (pan,))
-    conn.commit()
-    conn.close()
+        with open(file_path, 'w') as file:
+            for row_id in tree.get_children():
+                pan = tree.item(row_id, 'values')[0]
+                file.write(pan + '\n')
