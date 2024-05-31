@@ -3,8 +3,7 @@ from tkinter import ttk, Menu
 from tkinter import messagebox
 from generator import generate_cvv, generate_pan, update_card_brand_display
 from validator import validate_pan, validate_expiry_date
-from import_export import import_bins, export_pans
-import tkinter.filedialog as fd
+from import_export import import_bins_action, export_pans_action
 from PIL import Image, ImageTk
 
 def setup_ui(win):
@@ -147,18 +146,3 @@ def validate_expiry_action(expiry_date, scr):
     scr.delete(1.0, tk.END)
     scr.insert(tk.END, message)
 
-def import_bins_action(scr):
-    file_path = fd.askopenfilename(filetypes=[("CSV files", "*.csv")])
-    if file_path:
-        bins = import_bins(file_path)
-        scr.delete(1.0, tk.END)
-        for bin in bins:
-            scr.insert(tk.END, bin + '\n')
-
-def export_pans_action(tree):
-    file_path = fd.asksaveasfilename(defaultextension=".csv", filetypes=[("CSV files", "*.csv")])
-    if file_path:
-        with open(file_path, 'w') as file:
-            for row_id in tree.get_children():
-                pan = tree.item(row_id, 'values')[0]
-                file.write(pan + '\n')
