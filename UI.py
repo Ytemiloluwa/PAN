@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import ttk, scrolledtext, Menu
+from tkinter import ttk, Menu
 from tkinter import messagebox
 from generator import generate_cvv, generate_pan, update_card_brand_display
 from validator import validate_pan, validate_expiry_date
@@ -56,8 +56,12 @@ def setup_ui(win):
     action_generate = ttk.Button(mighty, text="Generate", command=lambda: generate_action(name, tree, count_var))
     action_generate.grid(column=2, row=1, padx=5, pady=5)
 
-    action_validate = ttk.Button(mighty, text="Validate", command=lambda: validate_action(name, tree))
+    action_validate = ttk.Button(mighty, text="Validate", command=lambda: validate_action(name, validate_scr))
     action_validate.grid(column=3, row=1, padx=5, pady=5)
+
+    # Text widget for displaying validation result
+    validate_scr = tk.Text(mighty, width=40, height=5)
+    validate_scr.grid(column=2, row=4, columnspan=2, padx=15, pady=5)
 
     # Row 2: Expiry Date Label and Entry
     expiry_label = ttk.Label(mighty, text="Expiry Date (MM/YY):")
@@ -124,16 +128,18 @@ def generate_action(name, tree, count_var):
         for i in tree.get_children():
             tree.delete(i)
         pans = generate_pan(bin_input)
-        for pan in pans:
-            tree.insert('', tk.END, values=(pan, ))
-        count_var.set('{:,}'.format(len(pans)))
+        if pans:
+            for pan in pans:
+                tree.insert('', tk.END, values=(pan, ))
+            count_var.set('{:,}'.format(len(pans)))
+        else:
+            messagebox.showerror("Error", "Failed to generate PANs.")
 
-def validate_action(name, tree):
+def validate_action(name, scr):
     pan_input = name.get()
     is_valid, message = validate_pan(pan_input)
-    for i in tree.get_children():
-        tree.delete(i)
-        tree.insert('', tk.END, values=(message))
+    scr.delete(1.0, tk.END)
+    scr.insert(tk.END, message)
 
 
 def validate_expiry_action(expiry_date, scr):
