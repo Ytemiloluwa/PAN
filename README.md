@@ -15,7 +15,6 @@ PAN Generator is a desktop/command-line software written in Python that generate
 - Tkinter
 - re
 - numpy
-- Sqlite3
 - PIL
   
 
@@ -25,8 +24,7 @@ PAN Generator is a desktop/command-line software written in Python that generate
 
 # PAN Generator on macOS
 
-<img width="897" alt="Screenshot 2024-05-27 at 20 47 25" src="https://github.com/Ytemiloluwa/PAN/assets/91268094/7540b1cd-f9d1-48f4-be12-bda0fea867c8">
-
+<img width="821" alt="Screenshot 2024-05-30 at 21 37 25" src="https://github.com/Ytemiloluwa/PAN/assets/91268094/656b0e35-2a52-40fd-9947-e4d7e32f152e">
 
 # PAN Generator on Windows
 ![Capture](https://github.com/Ytemiloluwa/PAN/assets/91268094/51e6dc91-f65b-48ea-ae5e-d4dad8682598)
