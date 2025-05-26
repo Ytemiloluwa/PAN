@@ -1,0 +1,29 @@
+[tool.poetry]
+name = "fintechx-desktop"
+version = "0.1.0"
+description = "Robust Fintech Desktop Software"
+authors = ["Temi"]
+license = "Proprietary"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+pysqlcipher3 = "^1.1.0" # For encrypted SQLite
+PyQt6 = "^6.7.0" # UI Framework
+# Database (e.g., SQLAlchemy)
+# Other core libraries
+pybind11 = "^2.10" # For C++ bindings
+
+[tool.poetry.dev-dependencies]
+pytest = "^7.0"
+# Linters, formatters, etc.
+
+[build-system]
+requires = ["poetry-core>=1.0.0", "setuptools", "pybind11>=2.10"]
+build-backend = "poetry.core.masonry.api"
+
+# Custom build script to integrate CMake
+[tool.poetry.build]
+script = "build.py"
+generate-setup-file = false
+
