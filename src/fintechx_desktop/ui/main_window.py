@@ -1,35 +1,40 @@
-import sys
 import logging
-from PySide6.QtWidgets import (
-    QApplication, QMainWindow, QStatusBar, QLabel, QVBoxLayout, QWidget, QPushButton, 
-    QStackedWidget, QLineEdit, QFormLayout, QSpinBox, QTextEdit, QMessageBox, 
-    QGroupBox, QHBoxLayout, QComboBox
+from PyQt6.QtWidgets import (
+ QMainWindow, QStatusBar, QLabel, QVBoxLayout, QWidget, QPushButton,
+    QStackedWidget, QLineEdit, QFormLayout, QSpinBox, QTextEdit,
+    QGroupBox, QComboBox
 )
-from PySide6.QtCore import Qt, Slot
+from PyQt6.QtCore import pyqtSlot
+
+# Import other UI widgets
+from .virtual_terminal_widget import VirtualTerminalWidget  # Import the new widget
 
 # Import the native C++ module
 try:
     from fintechx_desktop.infrastructure import fintechx_native
-    NATIVE_MODULE_AVAILABLE = True
 except ImportError:
     logging.error("Native C++ module (fintechx_native) not found. Ensure it's built and installed.")
-    # Define dummy native module for UI development if needed
+
+
     class DummyNative:
         def luhn_check(self, pan): return False
+
         def generate_pan(self, prefix, length): return None
+
         def generate_pan_batch(self, prefix, length, count): return []
+
+
     fintechx_native = DummyNative()
-    NATIVE_MODULE_AVAILABLE = False
+
 
 # Placeholder Widgets for other views
 class LoginWidget(QWidget):
-    # Keep the previous simple placeholder for now
-    # Authentication logic will be connected later
     def __init__(self, parent=None):
         super().__init__(parent)
         layout = QVBoxLayout(self)
         layout.addWidget(QLabel("Login Screen Placeholder"))
         self.setLayout(layout)
+
 
 class DashboardWidget(QWidget):
     def __init__(self, parent=None):
@@ -38,13 +43,15 @@ class DashboardWidget(QWidget):
         layout.addWidget(QLabel("Dashboard Placeholder"))
         self.setLayout(layout)
 
-# --- PAN Tools Widget --- 
+
+# --- PAN Tools Widget ---
 class PanToolsWidget(QWidget):
+    # (Content from previous version - kept for brevity, assumed unchanged)
     def __init__(self, parent=None):
         super().__init__(parent)
         main_layout = QVBoxLayout(self)
 
-        # --- Validation Group --- 
+        # --- Validation Group ---
         validation_group = QGroupBox("Validate PAN")
         validation_layout = QFormLayout()
         self.pan_validate_input = QLineEdit()
@@ -56,7 +63,7 @@ class PanToolsWidget(QWidget):
         validation_layout.addRow(self.validate_result_label)
         validation_group.setLayout(validation_layout)
 
-        # --- Generation Group --- 
+        # --- Generation Group ---
         generation_group = QGroupBox("Generate PAN(s)")
         generation_layout = QFormLayout()
         self.pan_prefix_input = QLineEdit()
@@ -81,53 +88,56 @@ class PanToolsWidget(QWidget):
         main_layout.addWidget(generation_group)
         self.setLayout(main_layout)
 
-        # --- Connect Signals --- 
+        # --- Connect Signals ---
         self.validate_button.clicked.connect(self.validate_pan)
         self.generate_button.clicked.connect(self.generate_pans)
 
-    @Slot()
+    @pyqtSlot()
     def validate_pan(self):
-        pan_to_validate = self.pan_validate_input.text().strip().replace(" ", "") # Remove spaces
+        pan_to_validate = self.pan_validate_input.text().strip().replace(" ", "")  # Remove spaces
         if not pan_to_validate:
             self.validate_result_label.setText("Result: Please enter a PAN.")
             return
         if not pan_to_validate.isdigit():
-             self.validate_result_label.setText("Result: PAN must contain only digits.")
-             return
+            self.validate_result_label.setText("Result: PAN must contain only digits.")
+            return
 
         try:
             is_valid = fintechx_native.luhn_check(pan_to_validate)
             if is_valid:
-                self.validate_result_label.setText("Result: <font color='green'>Valid (Luhn Check Passed)</font>")
+                self.validate_result_label.setText("Result: <font color=\'green\'>Valid (Luhn Check Passed)</font>")
             else:
-                self.validate_result_label.setText("Result: <font color='red'>Invalid (Luhn Check Failed)</font>")
+                self.validate_result_label.setText("Result: <font color=\'red\'>Invalid (Luhn Check Failed)</font>")
         except Exception as e:
             logging.error(f"Error during PAN validation: {e}")
-            self.validate_result_label.setText("Result: <font color='red'>Error during validation.</font>")
-            QMessageBox.warning(self, "Validation Error", f"An error occurred: {e}")
+            self.validate_result_label.setText("Result: <font color=\'red\'>Error during validation.</font>")
 
-    @Slot()
+
+    @pyqtSlot()
     def generate_pans(self):
         prefix = self.pan_prefix_input.text().strip()
         count = self.pan_count_spinbox.value()
         length_text = self.pan_length_combo.currentText()
-        
-        # Extract length from combo box text
+
         try:
             length = int(length_text.split(" ")[0])
         except (ValueError, IndexError):
-             QMessageBox.warning(self, "Input Error", "Invalid length selected.")
-             return
+            # QMessageBox.warning(self, "Input Error", "Invalid length selected.")
+            self.generated_pans_output.setText("Error: Invalid length selected.")
+            return
 
         if not prefix:
-            QMessageBox.warning(self, "Input Error", "Please enter a PAN prefix.")
+            # QMessageBox.warning(self, "Input Error", "Please enter a PAN prefix.")
+            self.generated_pans_output.setText("Error: Please enter a PAN prefix.")
             return
         if not prefix.isdigit():
-             QMessageBox.warning(self, "Input Error", "Prefix must contain only digits.")
-             return
+            # QMessageBox.warning(self, "Input Error", "Prefix must contain only digits.")
+            self.generated_pans_output.setText("Error: Prefix must contain only digits.")
+            return
         if len(prefix) >= length:
-             QMessageBox.warning(self, "Input Error", "Prefix length must be less than total PAN length.")
-             return
+            # QMessageBox.warning(self, "Input Error", "Prefix length must be less than total PAN length.")
+            self.generated_pans_output.setText("Error: Prefix length must be less than total PAN length.")
+            return
 
         try:
             if count == 1:
@@ -145,15 +155,16 @@ class PanToolsWidget(QWidget):
         except Exception as e:
             logging.error(f"Error during PAN generation: {e}")
             self.generated_pans_output.setText("Error during generation.")
-            QMessageBox.warning(self, "Generation Error", f"An error occurred: {e}")
+            # QMessageBox.warning(self, "Generation Error", f"An error occurred: {e}")
 
-# --- Main Window --- 
+
+# --- Main Window ---
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
 
         self.setWindowTitle("FinTechX Desktop")
-        self.setGeometry(100, 100, 800, 600) # x, y, width, height
+        self.setGeometry(100, 100, 800, 600)  # x, y, width, height
 
         # Central Widget to hold different views
         self.central_widget = QStackedWidget()
@@ -162,37 +173,27 @@ class MainWindow(QMainWindow):
         # Create view instances
         self.login_view = LoginWidget()
         self.dashboard_view = DashboardWidget()
-        self.pan_tools_view = PanToolsWidget() # Now includes functionality
+        self.pan_tools_view = PanToolsWidget()
+        self.virtual_terminal_view = VirtualTerminalWidget()  # Instantiate the new widget
 
         # Add views to the stacked widget
         self.central_widget.addWidget(self.login_view)
         self.central_widget.addWidget(self.dashboard_view)
         self.central_widget.addWidget(self.pan_tools_view)
+        self.central_widget.addWidget(self.virtual_terminal_view)  # Add the new widget
 
-        # --- Navigation --- 
-        # Initially show login screen (will be changed later)
-        # For now, let's add a way to switch views for testing
-        self.setup_menus() # Setup menu bar for navigation
-        self.show_login_screen() # Start with login
+        # --- Navigation ---
+        self.setup_menus()  # Setup menu bar for navigation
+        self.show_login_screen()  # Start with login
 
-        # --- Status Bar --- 
-        self.status_bar = QStatusBar()
-        self.setStatusBar(self.status_bar)
-        self.status_bar.showMessage("Ready")
-
-    def showEvent(self, event):
-        """Called when the window is shown."""
-        super().showEvent(event)
-        # Show native module warning if needed
-        if not NATIVE_MODULE_AVAILABLE:
-            QMessageBox.warning(self, "Warning", "Native C++ module not found. PAN features will use dummy implementations.")
+        # --- Status Bar ---
+        self.statusBar().showMessage("Ready")
 
     def setup_menus(self):
         menu_bar = self.menuBar()
-        
+
         # File Menu
         file_menu = menu_bar.addMenu("&File")
-        # Add login/logout actions later
         exit_action = file_menu.addAction("E&xit")
         exit_action.triggered.connect(self.close)
 
@@ -201,11 +202,13 @@ class MainWindow(QMainWindow):
         login_action = view_menu.addAction("Login Screen")
         dashboard_action = view_menu.addAction("Dashboard")
         pan_tools_action = view_menu.addAction("PAN Tools")
+        vt_action = view_menu.addAction("&Virtual Terminal")  # Add menu item for VT
 
         login_action.triggered.connect(self.show_login_screen)
         dashboard_action.triggered.connect(self.show_dashboard)
         pan_tools_action.triggered.connect(self.show_pan_tools)
-        
+        vt_action.triggered.connect(self.show_virtual_terminal)  # Connect action
+
         # Add other menus (Tools, Help) later
 
     def show_login_screen(self):
@@ -213,7 +216,6 @@ class MainWindow(QMainWindow):
         self.statusBar().showMessage("Please Login")
 
     def show_dashboard(self):
-        # This would be called after successful login
         self.central_widget.setCurrentWidget(self.dashboard_view)
         self.statusBar().showMessage("Dashboard Active")
 
@@ -221,19 +223,11 @@ class MainWindow(QMainWindow):
         self.central_widget.setCurrentWidget(self.pan_tools_view)
         self.statusBar().showMessage("PAN Tools Active")
 
+    def show_virtual_terminal(self):  # Add method to show VT
+        self.central_widget.setCurrentWidget(self.virtual_terminal_view)
+        self.statusBar().showMessage("Virtual Terminal Active")
+
     def closeEvent(self, event):
-        # Add cleanup code here if needed (e.g., close DB connection)
         logging.info("Closing application...")
         event.accept()
-
-# Main application entry point (typically in a separate main.py)
-# def run_app():
-#     logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
-#     app = QApplication(sys.argv)
-#     main_window = MainWindow()
-#     main_window.show()
-#     sys.exit(app.exec())
-
-# if __name__ == "__main__":
-#     run_app()
 
